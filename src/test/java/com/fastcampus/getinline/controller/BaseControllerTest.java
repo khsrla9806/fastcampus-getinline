@@ -16,9 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc // MockMvc를 자동으로 Autowired 받을 수 있다.
 @SpringBootTest
 class BaseControllerTest {
-    @Autowired
-    private MockMvc mvc;
+    private final MockMvc mvc;
 
+    public BaseControllerTest(@Autowired MockMvc mvc) {
+        this.mvc = mvc;
+    }
     @DisplayName("[view][GET] 기본 페이지 요청")
     @Test
     void givenNothing_whenRequestingRootPage_thenReturnsIndexPage() throws Exception {
