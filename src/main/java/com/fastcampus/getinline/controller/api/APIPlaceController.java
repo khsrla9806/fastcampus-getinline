@@ -4,6 +4,8 @@ import com.fastcampus.getinline.constant.PlaceType;
 import com.fastcampus.getinline.domain.Place;
 import com.fastcampus.getinline.dto.APIDataResponse;
 import com.fastcampus.getinline.dto.PlaceDto;
+import com.fastcampus.getinline.dto.PlaceRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,9 +25,10 @@ public class APIPlaceController {
         )));
     }
 
+    @ResponseStatus(HttpStatus.CREATED) // 201
     @PostMapping("/places")
-    public Boolean createPlace() {
-        return true;
+    public APIDataResponse<Void> createPlace(PlaceRequest request) {
+        return APIDataResponse.empty();
     }
 
     @GetMapping("/places/{placeId}")
