@@ -24,26 +24,27 @@ class APIPlaceControllerTest {
        this.mvc = mvc;
    }
 
-   @DisplayName("[API][GET] 장소 리스트 조회")
-    @Test
-    void givenNothing_whenRequestPlaces_thenReturnsListOfPlacesInStandardResponse() throws Exception {
-        // Given
+   @DisplayName("[API][GET] 장소 리스트 조회 - 장소 리스트 데이터를 담은 표준 API 출력")
+   @Test
+   void givenNothing_whenRequestingPlacesList_thenReturnsPlacesStandardResponse() throws Exception {
+       // Given
 
-        // When & Then
-        mvc.perform(get("/api/places"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.data").isArray()) // data가 array로 들어왔는가?
-                .andExpect(jsonPath("$.data[0].placeType").value(PlaceType.COMMON.name()))
-                .andExpect(jsonPath("$.data[0].placeName").value("패스트캠퍼스"))
-                .andExpect(jsonPath("$.data[0].address").value("서울시 강남구 강남대로 1234"))
-                .andExpect(jsonPath("$.data[0].phoneNumber").value("010-1234-1234"))
-                .andExpect(jsonPath("$.data[0].capacity").value(30))
-                .andExpect(jsonPath("$.data[0].memo").value("신장개업"))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
-                .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
-    }
+       // When & Then
+       mvc.perform(get("/api/places"))
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(jsonPath("$.data").isArray()) // data가 array로 들어왔는가?
+               .andExpect(jsonPath("$.data[0].placeType").value(PlaceType.COMMON.name()))
+               .andExpect(jsonPath("$.data[0].placeName").value("패스트캠퍼스"))
+               .andExpect(jsonPath("$.data[0].address").value("서울시 강남구 강남대로 1234"))
+               .andExpect(jsonPath("$.data[0].phoneNumber").value("010-1234-1234"))
+               .andExpect(jsonPath("$.data[0].capacity").value(30))
+               .andExpect(jsonPath("$.data[0].memo").value("신장개업"))
+               .andExpect(jsonPath("$.success").value(true))
+               .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
+               .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+   }
+
 
     @DisplayName("[API][GET] 단일 장소 조회 - 장소가 존재하는 경우")
     @Test
