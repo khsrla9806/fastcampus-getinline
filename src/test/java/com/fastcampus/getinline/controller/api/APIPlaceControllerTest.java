@@ -11,8 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(APIPlaceController.class)
@@ -81,7 +80,7 @@ class APIPlaceControllerTest {
     @Test
     void givenPlaceAndItsId_whenRequestPlace_thenReturnsPlace() throws Exception {
 
-       int placeId = 1;
+        long placeId = 1L;
         // Given
 
         // When & Then
@@ -100,11 +99,11 @@ class APIPlaceControllerTest {
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
     }
 
-    @DisplayName("[API][GET] 단일 장소 조회 - 장소가 존재하는 경우")
+    @DisplayName("[API][GET] 단일 장소 조회 - 장소가 존재하지 않는 경우")
     @Test
     void givenPlaceAndItsId_whenRequestPlace_thenReturnsEmptyPlace() throws Exception {
 
-        int placeId = 2;
+        long placeId = 2L;
         // Given
 
         // When & Then
@@ -112,6 +111,49 @@ class APIPlaceControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").isEmpty()) // data가 비어있는가?
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+    }
+
+    @DisplayName("[API][PUT] 장소 변경")
+    @Test
+    void givenPlaceId_whenModifyingPlace_thenReturnsSuccessfulStandardResponse() throws Exception {
+        // Given
+        long placeId = 1L;
+
+        PlaceRequest placeRequest = PlaceRequest.of(
+                PlaceType.PARTY,
+                "패스트파티룸",
+                "서울시 강남구 강남대로 5678",
+                "010-1234-5678",
+                56,
+                "재밌게 놀아봅시다."
+        );
+
+        // When & Then
+        mvc.perform(
+                put("/api/places/" + placeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(placeRequest))
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+    }
+
+    @DisplayName("[API][DELETE] 장소 삭제")
+    @Test
+    void givenPlaceId_whenDeletingPlace_thenReturnsSuccessfulStandardResponse() throws Exception {
+        // Given
+        long placeId = 1L;
+
+        // When & Then
+        mvc.perform(delete("/api/places/" + placeId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));

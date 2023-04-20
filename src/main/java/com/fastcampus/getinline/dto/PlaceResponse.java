@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlaceRequest {
+public class PlaceResponse {
     private PlaceType placeType;
     private String placeName;
     private String address;
@@ -16,7 +16,7 @@ public class PlaceRequest {
     private Integer capacity;
     private String memo;
 
-    public static PlaceRequest of(
+    public static PlaceResponse of(
             PlaceType placeType,
             String placeName,
             String address,
@@ -24,6 +24,6 @@ public class PlaceRequest {
             Integer capacity,
             String memo
     ) {
-        return new PlaceRequest(placeType, placeName, address, phoneNumber, capacity, memo);
+        return new PlaceResponse(placeType, placeName, address, phoneNumber, capacity, memo);
     }
 }

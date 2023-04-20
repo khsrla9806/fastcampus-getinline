@@ -8,6 +8,7 @@ import com.fastcampus.getinline.dto.PlaceRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequestMapping("/api")
@@ -21,7 +22,9 @@ public class APIPlaceController {
                 "서울시 강남구 강남대로 1234",
                 "010-1234-1234",
                 30,
-                "신장개업"
+                "신장개업",
+                LocalDateTime.now(),
+                LocalDateTime.now()
         )));
     }
 
@@ -32,8 +35,8 @@ public class APIPlaceController {
     }
 
     @GetMapping("/places/{placeId}")
-    public APIDataResponse<PlaceDto> getPlace(@PathVariable Integer placeId) {
-        if (placeId.equals(2)) {
+    public APIDataResponse<PlaceDto> getPlace(@PathVariable Long placeId) {
+        if (placeId.equals(2L)) {
             return APIDataResponse.of(null); // 테스트를 위한 임시 코드
         }
 
@@ -43,17 +46,19 @@ public class APIPlaceController {
                 "서울시 강남구 강남대로 1234",
                 "010-1234-1234",
                 30,
-                "신장개업"
+                "신장개업",
+                LocalDateTime.now(),
+                LocalDateTime.now()
         ));
     }
 
     @PutMapping("/places/{placeId}")
-    public Boolean modifyPlace(@PathVariable Integer placeId) {
-        return true;
+    public APIDataResponse<Void> modifyPlace(@PathVariable Long placeId, PlaceRequest request) {
+        return APIDataResponse.empty();
     }
 
     @DeleteMapping("/places/{placeId}")
-    public Boolean removePlace(@PathVariable Integer placeId) {
-        return true;
+    public APIDataResponse<Void> removePlace(@PathVariable Long placeId) {
+        return APIDataResponse.empty();
     }
 }

@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Getter
 @ToString
 @EqualsAndHashCode
@@ -18,8 +20,27 @@ public class PlaceDto {
     private String phoneNumber;
     private Integer capacity;
     private String memo;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
-    public static PlaceDto of(PlaceType placeType, String placeName, String address, String phoneNumber, Integer capacity, String memo) {
-        return new PlaceDto(placeType, placeName, address, phoneNumber, capacity, memo);
+    public static PlaceDto of(
+            PlaceType placeType,
+            String placeName,
+            String address,
+            String phoneNumber,
+            Integer capacity,
+            String memo,
+            LocalDateTime createdAt,
+            LocalDateTime modifiedAt
+    ) {
+        return new PlaceDto(placeType,
+                placeName,
+                address,
+                phoneNumber,
+                capacity,
+                memo,
+                createdAt,
+                modifiedAt
+        );
     }
 }

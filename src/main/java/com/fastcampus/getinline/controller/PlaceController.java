@@ -15,7 +15,7 @@ public class PlaceController {
     }
 
     @GetMapping("/{placeId}")
-    public String placeDetail(@PathVariable Integer placeId) {
+    public String placeDetail(@PathVariable Long placeId) {
         return "place/detail";
     }
 }
