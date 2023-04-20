@@ -14,8 +14,8 @@ public class EventResponse {
     private Long placeId;
     private String eventName;
     private EventStatus eventStatus;
-    private LocalDateTime eventStartDateTime;
-    private LocalDateTime eventEndDateTime;
+    private LocalDateTime eventStartDatetime;
+    private LocalDateTime eventEndDatetime;
     private Integer currentNumberOfPeople;
     private Integer capacity;
     private String memo;
@@ -31,5 +31,21 @@ public class EventResponse {
             String memo
     ) {
         return new EventResponse(placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime, currentNumberOfPeople, capacity, memo);
+    }
+
+    public static EventResponse from(EventDto eventDto) {
+        if (eventDto == null) {
+            return null;
+        }
+        return EventResponse.of(
+                eventDto.getPlaceId(),
+                eventDto.getEventName(),
+                eventDto.getEventStatus(),
+                eventDto.getEventStartDateTime(),
+                eventDto.getEventEndDateTime(),
+                eventDto.getCurrentNumberOfPeople(),
+                eventDto.getCapacity(),
+                eventDto.getMemo()
+        );
     }
 }
