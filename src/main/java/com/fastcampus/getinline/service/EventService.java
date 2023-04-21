@@ -31,15 +31,15 @@ public class EventService {
         return eventRepository.findEvent(evenId);
     }
 
-    public boolean createEvent(EventDto eventDto) {
+    public Boolean createEvent(EventDto eventDto) {
         return eventRepository.insertEvent(eventDto);
     }
 
-    public boolean modifyEvent(Long eventId, EventDto eventDto) {
+    public Boolean modifyEvent(Long eventId, EventDto eventDto) {
         return eventRepository.updateEvent(eventId, eventDto);
     }
 
-    public boolean deleteEvent(Long eventId) {
+    public Boolean deleteEvent(Long eventId) {
         return eventRepository.deleteEvent(eventId);
     }
 }

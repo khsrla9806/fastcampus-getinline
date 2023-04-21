@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -44,8 +45,9 @@ public class APIEventController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
-    public APIDataResponse<Void> createEvent(@RequestBody EventRequest eventRequest) {
-        return APIDataResponse.empty();
+    public APIDataResponse<String> createEvent(@RequestBody EventRequest eventRequest) {
+        Boolean result = eventService.createEvent(EventRequest.toDto(eventRequest));
+        return APIDataResponse.of(Boolean.toString(result));
     }
 
     @GetMapping("/events/{eventId}")

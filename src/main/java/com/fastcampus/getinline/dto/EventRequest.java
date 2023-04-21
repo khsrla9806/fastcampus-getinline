@@ -32,5 +32,23 @@ public class EventRequest {
     ) {
         return new EventRequest(placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime, currentNumberOfPeople, capacity, memo);
     }
+
+    public static EventDto toDto(EventRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return EventDto.of(
+                request.getPlaceId(),
+                request.getEventName(),
+                request.getEventStatus(),
+                request.getEventStartDateTime(),
+                request.getEventEndDateTime(),
+                request.getCurrentNumberOfPeople(),
+                request.getCapacity(),
+                request.getMemo(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+    }
 }
 
