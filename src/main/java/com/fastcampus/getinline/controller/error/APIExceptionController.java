@@ -41,32 +41,48 @@ public class APIExceptionController extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<APIErrorResponse> general(GeneralException exception) {
+    public ResponseEntity<Object> general(GeneralException exception, WebRequest request) {
         ErrorCode errorCode = exception.getErrorCode();
         HttpStatus status = errorCode.isClientSideError() ?
                 HttpStatus.BAD_REQUEST :
                 HttpStatus.INTERNAL_SERVER_ERROR;
 
-        return ResponseEntity
-                .status(status)
-                .body(APIErrorResponse.of(
-                        false,
-                        errorCode,
-                        errorCode.getMessage(exception.getMessage())
-                ));
+        // ResponseEntityExceptionHandler의 기능을 사용할 수 있도록 설정해주는 Return
+        return super.handleExceptionInternal(
+                exception,
+                APIErrorResponse.of(false, errorCode, errorCode.getMessage(exception)),
+                HttpHeaders.EMPTY,
+                status,
+                request
+        );
     }
 
     @ExceptionHandler
-    public ResponseEntity<APIErrorResponse> exception(Exception exception) {
+    public ResponseEntity<Object> exception(Exception exception, WebRequest request) {
         ErrorCode errorCode = INTERNAL_ERROR;
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        return ResponseEntity
-                .status(status)
-                .body(APIErrorResponse.of(
-                        false,
-                        errorCode,
-                        errorCode.getMessage(exception.getMessage())
-                ));
+        return super.handleExceptionInternal(
+                exception,
+                APIErrorResponse.of(false, errorCode, errorCode.getMessage(exception)),
+                HttpHeaders.EMPTY,
+                status,
+                request
+        );
+
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorCode errorCode = status.is4xxClientError() ?
+                ErrorCode.SPRING_BAD_REQUEST :
+                ErrorCode.SPRING_INTERNAL_ERROR;
+        return super.handleExceptionInternal(
+                ex,
+                APIErrorResponse.of(false, errorCode, errorCode.getMessage(ex)),
+                headers,
+                status,
+                request
+        );
     }
 }
