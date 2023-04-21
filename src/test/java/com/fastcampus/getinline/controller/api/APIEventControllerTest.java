@@ -3,18 +3,18 @@ package com.fastcampus.getinline.controller.api;
 import com.fastcampus.getinline.constant.ErrorCode;
 import com.fastcampus.getinline.constant.EventStatus;
 import com.fastcampus.getinline.dto.EventDto;
+import com.fastcampus.getinline.dto.EventRequest;
 import com.fastcampus.getinline.dto.EventResponse;
 import com.fastcampus.getinline.service.EventService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(APIEventController.class)
@@ -108,7 +109,7 @@ class APIEventControllerTest {
     @Test
     void givenEvent_whenCreatingAnEvent_thenReturnsSuccessfulStandardResponse() throws Exception {
         // Given
-        EventResponse eventResponse = EventResponse.of(
+        EventRequest eventRequest = EventRequest.of(
                 1L,
                 "오후 운동",
                 EventStatus.OPENED,
@@ -119,17 +120,52 @@ class APIEventControllerTest {
                 "마스크 꼭 착용하세요"
         );
 
+        given(eventService.createEvent(any())).willReturn(true);
+
         // When & Then
         mvc.perform(
                         post("/api/events")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(eventResponse))
+                                .content(mapper.writeValueAsString(eventRequest))
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+
+        verify(eventService, times(1)).createEvent(any());
+    }
+
+    @DisplayName("[API][POST] 잘못된 요청 필드값이 들어왔을 때, 이벤트 생성 실패")
+    @Test
+    void givenWrongParams_whenCreatingAnEvent_thenReturnsFailedStandardResponse() throws Exception {
+        // Given
+        EventRequest eventRequest = EventRequest.of(
+                -1L,
+                "   ",
+                null,
+                null,
+                null,
+                -1,
+                0,
+                "마스크 꼭 착용하세요"
+        );
+
+        // When & Then
+        mvc.perform(
+                        post("/api/events")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(eventRequest))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.SPRING_BAD_REQUEST.getCode()))
+                .andExpect(jsonPath("$.message").value(containsString(ErrorCode.SPRING_BAD_REQUEST.getMessage())))
+                .andDo(print());
+
+        verify(eventService, never()).createEvent(any());
     }
 
     @DisplayName("[API][GET] 단일 이벤트 조회 - 이벤트 있는 경우, 이벤트 데이터를 담은 표준 API 출력")
