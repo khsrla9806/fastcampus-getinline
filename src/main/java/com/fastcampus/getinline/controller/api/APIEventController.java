@@ -9,12 +9,16 @@ import com.fastcampus.getinline.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @RestController
@@ -24,8 +28,8 @@ public class APIEventController {
 
     @GetMapping("/events")
     public APIDataResponse<List<EventResponse>> getEvents(
-            @RequestParam(required = false) Long placeId, // 해당 애노테이션의 옵션을 주면 넣어주지 않아도 문제가 없다.
-            @RequestParam(required = false) String eventName,
+            @Positive @RequestParam(required = false) Long placeId, // 해당 애노테이션의 옵션을 주면 넣어주지 않아도 문제가 없다.
+            @Size(min = 2) @RequestParam(required = false) String eventName,
             @RequestParam(required = false) EventStatus eventStatus,
             // String으로 들어온 날짜 포멧을 LocalDateTime으로 잘 바꿔준다.
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDateTime,
