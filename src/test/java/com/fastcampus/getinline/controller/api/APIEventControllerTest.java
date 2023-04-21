@@ -6,6 +6,7 @@ import com.fastcampus.getinline.dto.EventDto;
 import com.fastcampus.getinline.dto.EventResponse;
 import com.fastcampus.getinline.service.EventService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -19,10 +20,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,9 +45,9 @@ class APIEventControllerTest {
     }
 
 
-    @DisplayName("[API][GET] 이벤트 리스트 조회")
+    @DisplayName("[API][GET] 검색 데이터가 들어왔을 때, 이벤트 리스트 조회")
     @Test
-    void givenNothing_whenRequestingEventsList_thenReturnsStandardResponse() throws Exception {
+    void givenParams_whenRequestingEventsList_thenReturnsListsOfEventInStandardResponse() throws Exception {
         // Given
         given(eventService.getEvents(any(), any(), any(), any(), any())).willReturn(List.of(createEventDto()));
 
@@ -78,6 +79,29 @@ class APIEventControllerTest {
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
 
         verify(eventService, times(1)).getEvents(any(), any(), any(), any(), any());
+    }
+
+    @DisplayName("[API][GET] 잘못된 검색 데이터가 들어왔을 때, 이벤트 리스트 조회")
+    @Test
+    void givenWrongParams_whenRequestingEventsList_thenReturnsFailedStandardResponse() throws Exception {
+        // Given
+        // Service까지 도달하면 안 되기 때문에 Mocking이 필요없다.
+
+        // When & Then
+        mvc.perform(get("/api/events")
+                        .queryParam("placeId", "0") // <-- Validation에 통과되지 못하는 파라미터
+                        .queryParam("eventName", "오") // <-- Validation에 통과되지 못하는 파라미터
+                        .queryParam("eventStatus", EventStatus.OPENED.name())
+                        .queryParam("eventStartDatetime", "2021-01-01T00:00:00")
+                        .queryParam("eventEndDatetime", "2021-01-01T00:00:00")
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getCode()))
+                .andExpect(jsonPath("$.message").value(containsString(ErrorCode.VALIDATION_ERROR.getMessage())));
+
+        verify(eventService, never()).getEvents(any(), any(), any(), any(), any());
     }
 
     @DisplayName("[API][POST] 이벤트 생성")
