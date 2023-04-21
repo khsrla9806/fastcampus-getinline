@@ -45,7 +45,7 @@ public class APIEventController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
-    public APIDataResponse<String> createEvent(@RequestBody EventRequest eventRequest) {
+    public APIDataResponse<String> createEvent(@Valid @RequestBody EventRequest eventRequest) {
         Boolean result = eventService.createEvent(EventRequest.toDto(eventRequest));
         return APIDataResponse.of(Boolean.toString(result));
     }
