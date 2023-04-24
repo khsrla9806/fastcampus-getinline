@@ -17,22 +17,39 @@ import javax.validation.ConstraintViolationException;
 import static com.fastcampus.getinline.constant.ErrorCode.INTERNAL_ERROR;
 
 @RestControllerAdvice(annotations = RestController.class) // RestController를 쓰는 클래스로 범위를 좁힘
-public class APIExceptionController extends ResponseEntityExceptionHandler {
+public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * ResponseEntityExceptionHandler를 사용하는 예외처리 코드로 작성
      */
     @ExceptionHandler
     public ResponseEntity<Object> validation(ConstraintViolationException exception, WebRequest request) {
-        ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
-        HttpStatus status = HttpStatus.BAD_REQUEST; // 이미 Client-Side인 것을 알기 떄문에
-
         return super.handleExceptionInternal(
                 exception,
                 APIErrorResponse.of(
                         false,
-                        errorCode,
-                        errorCode.getMessage(exception)
+                        ErrorCode.VALIDATION_ERROR,
+                        ErrorCode.VALIDATION_ERROR.getMessage(exception)
+                ),
+                HttpHeaders.EMPTY,
+                HttpStatus.BAD_REQUEST,
+                request
+        );
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> general(GeneralException exception, WebRequest request) {
+        HttpStatus status = exception.getErrorCode().isClientSideError() ?
+                HttpStatus.BAD_REQUEST :
+                HttpStatus.INTERNAL_SERVER_ERROR;
+
+        // ResponseEntityExceptionHandler의 기능을 사용할 수 있도록 설정해주는 Return
+        return super.handleExceptionInternal(
+                exception,
+                APIErrorResponse.of(
+                        false,
+                        exception.getErrorCode(),
+                        exception.getErrorCode().getMessage(exception)
                 ),
                 HttpHeaders.EMPTY,
                 status,
@@ -41,32 +58,16 @@ public class APIExceptionController extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<Object> general(GeneralException exception, WebRequest request) {
-        ErrorCode errorCode = exception.getErrorCode();
-        HttpStatus status = errorCode.isClientSideError() ?
-                HttpStatus.BAD_REQUEST :
-                HttpStatus.INTERNAL_SERVER_ERROR;
-
-        // ResponseEntityExceptionHandler의 기능을 사용할 수 있도록 설정해주는 Return
-        return super.handleExceptionInternal(
-                exception,
-                APIErrorResponse.of(false, errorCode, errorCode.getMessage(exception)),
-                HttpHeaders.EMPTY,
-                status,
-                request
-        );
-    }
-
-    @ExceptionHandler
     public ResponseEntity<Object> exception(Exception exception, WebRequest request) {
-        ErrorCode errorCode = INTERNAL_ERROR;
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-
         return super.handleExceptionInternal(
                 exception,
-                APIErrorResponse.of(false, errorCode, errorCode.getMessage(exception)),
+                APIErrorResponse.of(
+                        false,
+                        ErrorCode.INTERNAL_ERROR,
+                        ErrorCode.INTERNAL_ERROR.getMessage(exception)
+                ),
                 HttpHeaders.EMPTY,
-                status,
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 request
         );
 
