@@ -41,7 +41,7 @@ class APIExceptionHandlerTest {
         ResponseEntity<Object> response = exceptionHandler.validation(exception, webRequest);
 
         // Then
-        getInternalResponseEntity(new ConstraintViolationException(Set.of()), exceptionHandler.validation(exception, webRequest), ErrorCode.VALIDATION_ERROR, HttpStatus.BAD_REQUEST);
+        getInternalResponseEntity(new ConstraintViolationException(Set.of()), response, ErrorCode.VALIDATION_ERROR, HttpStatus.BAD_REQUEST);
     }
 
 
