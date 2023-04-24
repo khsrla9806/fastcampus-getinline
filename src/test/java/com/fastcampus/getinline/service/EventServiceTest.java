@@ -1,7 +1,9 @@
 package com.fastcampus.getinline.service;
 
+import com.fastcampus.getinline.constant.ErrorCode;
 import com.fastcampus.getinline.constant.EventStatus;
 import com.fastcampus.getinline.dto.EventDto;
+import com.fastcampus.getinline.exception.GeneralException;
 import com.fastcampus.getinline.repository.EventRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -47,6 +51,23 @@ class EventServiceTest {
         // Then
         assertThat(list).hasSize(2);
         verify(eventRepository, times(1)).findEvents(null, null, null, null, null);
+    }
+
+    @Test
+    void givenRuntimeException_whenSearchingEvents_thenReturnsGeneralException() {
+        // Given
+        RuntimeException exception = new RuntimeException("test message");
+        given(eventRepository.findEvents(any(), any(), any(), any(), any()))
+                .willThrow(exception);
+
+        // When
+        Throwable thrown = catchThrowable(() -> sut.getEvents(any(), any(), any(), any(), any()));
+
+        // Then
+        assertThat(thrown)
+                .isInstanceOf(GeneralException.class)
+                .hasMessageContaining(ErrorCode.DATA_ACCESS_ERROR.getMessage());
+        verify(eventRepository, times(1)).findEvents(any(), any(), any(), any(), any());
     }
 
     @DisplayName("검색 조건과 함께 이벤트 검색 시, 검색된 결과를 보여준다.")

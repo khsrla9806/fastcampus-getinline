@@ -3,27 +3,29 @@ package com.fastcampus.getinline.controller.api;
 import com.fastcampus.getinline.constant.ErrorCode;
 import com.fastcampus.getinline.constant.EventStatus;
 import com.fastcampus.getinline.dto.EventDto;
+import com.fastcampus.getinline.dto.EventRequest;
 import com.fastcampus.getinline.dto.EventResponse;
 import com.fastcampus.getinline.service.EventService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(APIEventController.class)
@@ -44,9 +46,9 @@ class APIEventControllerTest {
     }
 
 
-    @DisplayName("[API][GET] 이벤트 리스트 조회")
+    @DisplayName("[API][GET] 검색 데이터가 들어왔을 때, 이벤트 리스트 조회")
     @Test
-    void givenNothing_whenRequestingEventsList_thenReturnsStandardResponse() throws Exception {
+    void givenParams_whenRequestingEventsList_thenReturnsListsOfEventInStandardResponse() throws Exception {
         // Given
         given(eventService.getEvents(any(), any(), any(), any(), any())).willReturn(List.of(createEventDto()));
 
@@ -80,11 +82,34 @@ class APIEventControllerTest {
         verify(eventService, times(1)).getEvents(any(), any(), any(), any(), any());
     }
 
+    @DisplayName("[API][GET] 잘못된 검색 데이터가 들어왔을 때, 이벤트 리스트 조회")
+    @Test
+    void givenWrongParams_whenRequestingEventsList_thenReturnsFailedStandardResponse() throws Exception {
+        // Given
+        // Service까지 도달하면 안 되기 때문에 Mocking이 필요없다.
+
+        // When & Then
+        mvc.perform(get("/api/events")
+                        .queryParam("placeId", "0") // <-- Validation에 통과되지 못하는 파라미터
+                        .queryParam("eventName", "오") // <-- Validation에 통과되지 못하는 파라미터
+                        .queryParam("eventStatus", EventStatus.OPENED.name())
+                        .queryParam("eventStartDatetime", "2021-01-01T00:00:00")
+                        .queryParam("eventEndDatetime", "2021-01-01T00:00:00")
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getCode()))
+                .andExpect(jsonPath("$.message").value(containsString(ErrorCode.VALIDATION_ERROR.getMessage())));
+
+        verify(eventService, never()).getEvents(any(), any(), any(), any(), any());
+    }
+
     @DisplayName("[API][POST] 이벤트 생성")
     @Test
     void givenEvent_whenCreatingAnEvent_thenReturnsSuccessfulStandardResponse() throws Exception {
         // Given
-        EventResponse eventResponse = EventResponse.of(
+        EventRequest eventRequest = EventRequest.of(
                 1L,
                 "오후 운동",
                 EventStatus.OPENED,
@@ -95,17 +120,52 @@ class APIEventControllerTest {
                 "마스크 꼭 착용하세요"
         );
 
+        given(eventService.createEvent(any())).willReturn(true);
+
         // When & Then
         mvc.perform(
                         post("/api/events")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(eventResponse))
+                                .content(mapper.writeValueAsString(eventRequest))
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+
+        verify(eventService, times(1)).createEvent(any());
+    }
+
+    @DisplayName("[API][POST] 잘못된 요청 필드값이 들어왔을 때, 이벤트 생성 실패")
+    @Test
+    void givenWrongParams_whenCreatingAnEvent_thenReturnsFailedStandardResponse() throws Exception {
+        // Given
+        EventRequest eventRequest = EventRequest.of(
+                -1L,
+                "   ",
+                null,
+                null,
+                null,
+                -1,
+                0,
+                "마스크 꼭 착용하세요"
+        );
+
+        // When & Then
+        mvc.perform(
+                        post("/api/events")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(eventRequest))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.SPRING_BAD_REQUEST.getCode()))
+                .andExpect(jsonPath("$.message").value(containsString(ErrorCode.SPRING_BAD_REQUEST.getMessage())))
+                .andDo(print());
+
+        verify(eventService, never()).createEvent(any());
     }
 
     @DisplayName("[API][GET] 단일 이벤트 조회 - 이벤트 있는 경우, 이벤트 데이터를 담은 표준 API 출력")
