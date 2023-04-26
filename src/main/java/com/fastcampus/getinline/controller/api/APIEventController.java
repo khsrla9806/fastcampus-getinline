@@ -7,6 +7,7 @@ import com.fastcampus.getinline.dto.EventRequest;
 import com.fastcampus.getinline.dto.EventResponse;
 import com.fastcampus.getinline.service.EventService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -36,10 +38,10 @@ public class APIEventController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDateTime,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventEndDateTime
     ) {
+        log.debug("이벤트 컨트롤러 관찰 = {}", placeId);
         List<EventResponse> responses = eventService
                 .getEvents(placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime)
                 .stream().map(EventResponse::from).collect(Collectors.toList());
-
         return APIDataResponse.of(responses);
     }
 
