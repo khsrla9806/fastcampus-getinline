@@ -6,7 +6,7 @@
 </head>
 <body>
 <p>
-  <span id="eventsTitle" data-th-text="'이벤트 리스트 조회' ?: _">This is events page.</span>
+  <span id="eventsTitle">This is events page.</span>
 </p>
 <table id="eventsTable">
   <thead>
@@ -22,15 +22,15 @@
     </tr>
   </thead>
   <!--  프로토타입 코드와 타임리프의 코드가 공존할 수 있게 해주는 remove 문법 -->
-  <tbody data-th-remove="all-but-first">
-    <tr data-th-each="event : ${events}">
-      <td class="placeId" data-th-text="${event.placeId}"></td>
-      <td class="eventName" data-th-text="${event.eventName}"></td>
-      <td class="eventStatus" data-th-text="${event.eventStatus}"></td>
-      <td class="eventStartDatetime" data-th-text="${event.eventStartDateTime}"></td>
-      <td class="eventEndDatetime" data-th-text="${event.eventEndDateTime}"></td>
-      <td class="currentNumberOfPeople" data-th-text="${event.currentNumberOfPeople}"></td>
-      <td class="capacity" data-th-text="${event.capacity}"></td>
+  <tbody>
+    <tr>
+      <td class="placeId">1</td>
+      <td class="eventName">등산</td>
+      <td class="eventStatus">OPENED</td>
+      <td class="eventStartDatetime">2021-01-01T13:00	</td>
+      <td class="eventEndDatetime">2021-01-01T13:00	</td>
+      <td class="currentNumberOfPeople">0</td>
+      <td class="capacity">30</td>
       <td><a>상세</a></td>
     </tr>
     <!--  프로토타입 데이터 -->
