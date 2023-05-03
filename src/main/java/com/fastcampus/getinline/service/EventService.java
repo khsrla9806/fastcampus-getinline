@@ -2,12 +2,14 @@ package com.fastcampus.getinline.service;
 
 import com.fastcampus.getinline.constant.ErrorCode;
 import com.fastcampus.getinline.constant.EventStatus;
+import com.fastcampus.getinline.domain.Event;
 import com.fastcampus.getinline.dto.EventDto;
 import com.fastcampus.getinline.dto.EventResponse;
 import com.fastcampus.getinline.exception.GeneralException;
 import com.fastcampus.getinline.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.events.EventTarget;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,8 +39,18 @@ public class EventService {
         return eventRepository.findEvent(evenId);
     }
 
-    public Boolean createEvent(EventDto eventDto) {
-        return eventRepository.insertEvent(eventDto);
+    public EventResponse createEvent(EventDto eventDto) {
+        Event event = eventRepository.save(Event.of(
+                eventDto.getPlaceId(),
+                eventDto.getEventName(),
+                eventDto.getEventStatus(),
+                eventDto.getEventStartDateTime(),
+                eventDto.getEventEndDateTime(),
+                eventDto.getCurrentNumberOfPeople(),
+                eventDto.getCapacity(),
+                eventDto.getMemo()
+        ));
+        return EventResponse.from(eventDto);
     }
 
     public Boolean modifyEvent(Long eventId, EventDto eventDto) {
