@@ -9,6 +9,7 @@ import com.fastcampus.getinline.exception.GeneralException;
 import com.fastcampus.getinline.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.events.EventTarget;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
 
+    @Transactional(readOnly = true)
     public List<EventDto> getEvents(
             Long placeId,
             String eventName,
@@ -35,10 +37,12 @@ public class EventService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Optional<EventDto> getEvent(Long evenId) {
         return eventRepository.findEvent(evenId);
     }
 
+    @Transactional
     public EventResponse createEvent(EventDto eventDto) {
         Event event = eventRepository.save(Event.of(
                 eventDto.getPlaceId(),
@@ -53,10 +57,12 @@ public class EventService {
         return EventResponse.from(eventDto);
     }
 
+    @Transactional
     public Boolean modifyEvent(Long eventId, EventDto eventDto) {
         return eventRepository.updateEvent(eventId, eventDto);
     }
 
+    @Transactional
     public Boolean deleteEvent(Long eventId) {
         return eventRepository.deleteEvent(eventId);
     }
