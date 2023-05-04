@@ -2,7 +2,9 @@ package com.fastcampus.getinline.service;
 
 import com.fastcampus.getinline.constant.ErrorCode;
 import com.fastcampus.getinline.constant.EventStatus;
+import com.fastcampus.getinline.domain.Event;
 import com.fastcampus.getinline.dto.EventDto;
+import com.fastcampus.getinline.dto.EventResponse;
 import com.fastcampus.getinline.exception.GeneralException;
 import com.fastcampus.getinline.repository.EventRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -16,9 +18,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
+import static com.fastcampus.getinline.constant.EventStatus.OPENED;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -76,7 +78,7 @@ class EventServiceTest {
         // Given
         Long placeId = 1L;
         String eventName = "오전 운동";
-        EventStatus eventStatus = EventStatus.OPENED;
+        EventStatus eventStatus = OPENED;
         LocalDateTime eventStartDatetime = LocalDateTime.of(2023, 4, 20, 0, 0, 0);
         LocalDateTime eventEndDatetime = LocalDateTime.of(2023, 4, 21, 0, 0, 0);
 
@@ -136,33 +138,33 @@ class EventServiceTest {
         verify(eventRepository, times(1)).findEvent(eventId);
     }
 
-    @DisplayName("이벤트 정보를 주면, 이벤트 정보를 생성히고, true를 반환한다.")
+    @DisplayName("이벤트 정보를 주면, 이벤트 정보를 생성히고, EventResponse를 반환한다.")
     @Test
-    void givenEventInfo_whenCreating_thenCreateEventAndReturnsTrue() {
+    void givenEventInfo_whenCreating_thenCreateEventAndReturnsEventResponse() {
         // Given
-        EventDto eventDto = createEventDto(1L, "오후 운동", false);
-        given(eventRepository.insertEvent(eventDto)).willReturn(true);
+        EventDto eventDto = createEventDto(1L,
+                "패캠 강의",
+                OPENED,
+                LocalDateTime.now(),
+                LocalDateTime.now());
+        given(eventRepository.save(any())).willReturn(any(Event.class));
 
         // When
-        boolean result = sut.createEvent(eventDto);
+        EventResponse result = sut.createEvent(eventDto);
 
         // Then
-        assertThat(result).isTrue();
-        verify(eventRepository, times(1)).insertEvent(eventDto);
+        assertThat(result).isInstanceOf(EventResponse.class);
+        verify(eventRepository, times(1)).save(any(Event.class));
     }
 
-    @DisplayName("이벤트 정보를 주지 않으면, 이벤트 정보를 생성을 중단하고, fakse를 반환한다.")
+    @DisplayName("이벤트 정보를 주지 않으면, 이벤트 정보를 생성을 중단하고, Exception을 발생")
     @Test
-    void givenNothing_whenCreating_thenReturnsFalse() {
+    void givenNothing_whenCreating_thenThrowsNullPointerException() {
         // Given
-        given(eventRepository.insertEvent(null)).willReturn(false);
 
-        // When
-        boolean result = sut.createEvent(null);
-
-        // Then
-        assertThat(result).isFalse();
-        verify(eventRepository, times(1)).insertEvent(null);
+        // When & Then
+        assertThatThrownBy(() -> sut.createEvent(null)).isInstanceOf(NullPointerException.class);
+        verify(eventRepository, times(0)).save(null);
     }
 
     @DisplayName("이벤트 ID와 정보를 주면, 이벤트 정보를 변경하고 결과를 true로 보여준다.")
@@ -247,7 +249,7 @@ class EventServiceTest {
         return createEventDto(
                 placeId,
                 eventName,
-                EventStatus.OPENED,
+                OPENED,
                 LocalDateTime.parse(String.format("2023-04-20T%s:00:00", hourStart)),
                 LocalDateTime.parse(String.format("2023-04-20T%s:00:00", hourEnd))
         );
