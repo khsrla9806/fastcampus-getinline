@@ -120,7 +120,8 @@ class APIEventControllerTest {
                 "마스크 꼭 착용하세요"
         );
 
-        given(eventService.createEvent(any())).willReturn(true);
+        given(eventService.createEvent(any())).willReturn(EventResponse.of(
+                any(), any(), any(), any(), any(), any(), any(), any()));
 
         // When & Then
         mvc.perform(

@@ -2,12 +2,15 @@ package com.fastcampus.getinline.service;
 
 import com.fastcampus.getinline.constant.ErrorCode;
 import com.fastcampus.getinline.constant.EventStatus;
+import com.fastcampus.getinline.domain.Event;
 import com.fastcampus.getinline.dto.EventDto;
 import com.fastcampus.getinline.dto.EventResponse;
 import com.fastcampus.getinline.exception.GeneralException;
 import com.fastcampus.getinline.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.events.EventTarget;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +22,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
 
+    @Transactional(readOnly = true)
     public List<EventDto> getEvents(
             Long placeId,
             String eventName,
@@ -33,18 +37,32 @@ public class EventService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Optional<EventDto> getEvent(Long evenId) {
         return eventRepository.findEvent(evenId);
     }
 
-    public Boolean createEvent(EventDto eventDto) {
-        return eventRepository.insertEvent(eventDto);
+    @Transactional
+    public EventResponse createEvent(EventDto eventDto) {
+        Event event = eventRepository.save(Event.of(
+                eventDto.getPlaceId(),
+                eventDto.getEventName(),
+                eventDto.getEventStatus(),
+                eventDto.getEventStartDateTime(),
+                eventDto.getEventEndDateTime(),
+                eventDto.getCurrentNumberOfPeople(),
+                eventDto.getCapacity(),
+                eventDto.getMemo()
+        ));
+        return EventResponse.from(eventDto);
     }
 
+    @Transactional
     public Boolean modifyEvent(Long eventId, EventDto eventDto) {
         return eventRepository.updateEvent(eventId, eventDto);
     }
 
+    @Transactional
     public Boolean deleteEvent(Long eventId) {
         return eventRepository.deleteEvent(eventId);
     }
