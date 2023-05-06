@@ -67,12 +67,12 @@ public class Event {
     // insert, update를 못한다는 것을 의미하지는 않는다.
     // columnDefinition은 특정 DB에 종속될 수 있는 설정이다. 나중에는 빼주는 것이 좋다.
     @Column(nullable = false, insertable = false, updatable = false,
-            columnDefinition = "datetime default CURRENT_TIMESTAMP")
+            columnDefinition = "timeStamp default CURRENT_TIMESTAMP")
     @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(nullable = false, insertable = false, updatable = false,
-            columnDefinition = "datetime default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP")
+            columnDefinition = "timeStamp default CURRENT_TIMESTAMP")
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
