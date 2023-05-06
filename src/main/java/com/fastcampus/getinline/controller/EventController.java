@@ -3,6 +3,8 @@ package com.fastcampus.getinline.controller;
 import com.fastcampus.getinline.constant.EventStatus;
 import com.fastcampus.getinline.dto.EventDto;
 import com.fastcampus.getinline.dto.EventResponse;
+import com.fastcampus.getinline.repository.EventRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,39 +18,16 @@ import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/events")
+@RequiredArgsConstructor
 @Controller
 public class EventController {
+
+    private final EventRepository eventRepository;
 
     @GetMapping("")
     public ModelAndView events() {
         Map<String, Object> map = new HashMap<>();
-
-        map.put("events", List.of(
-                EventDto.of(
-                        1L,
-                        "오후 운동",
-                        EventStatus.OPENED,
-                        LocalDateTime.of(2021, 1, 1, 13, 0, 0),
-                        LocalDateTime.of(2021, 1, 1, 16, 0, 0),
-                        0,
-                        24,
-                        "마스크 꼭 착용하세요",
-                        LocalDateTime.now(),
-                        LocalDateTime.now()
-                ),
-                EventDto.of(
-                        1L,
-                        "오후 운동",
-                        EventStatus.OPENED,
-                        LocalDateTime.of(2021, 1, 1, 13, 0, 0),
-                        LocalDateTime.of(2021, 1, 1, 16, 0, 0),
-                        0,
-                        24,
-                        "마스크 꼭 착용하세요",
-                        LocalDateTime.now(),
-                        LocalDateTime.now()
-                )
-        ));
+        map.put("events", eventRepository.findAll());
 
         return new ModelAndView("event/index", map);
     }
