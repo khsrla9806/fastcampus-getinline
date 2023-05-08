@@ -5,14 +5,13 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
-@EqualsAndHashCode
 @ToString
 @Table(indexes = {
         @Index(columnList = "placeId"),
@@ -121,4 +120,15 @@ public class Event {
         );
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return id != null && id.equals(((Event) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eventName, eventStartDateTime, eventEndDateTime, createdAt, modifiedAt);
+    }
 }
