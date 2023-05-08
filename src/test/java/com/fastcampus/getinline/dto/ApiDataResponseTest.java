@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 // 단위 테스트는 빠르게 진행되어야 한다.
 // 스프링 빈이 따로 필요 없기 때문에 별도의 애노테이션이 필요 없다.
-class APIDataResponseTest {
+class ApiDataResponseTest {
     @DisplayName("문자열 데이터가 주어지면 표준 성공 응답을 생성한다.")
     @Test
     void givenStringData_whenCreatingResponse_thenReturnsSuccessfulResponse() {
@@ -16,7 +16,7 @@ class APIDataResponseTest {
         String data = "Test Data";
 
         // When
-        APIDataResponse<String> response = APIDataResponse.of(data);
+        ApiDataResponse<String> response = ApiDataResponse.of(data);
 
         // Then
         assertThat(response)
@@ -32,7 +32,7 @@ class APIDataResponseTest {
         // Given
 
         // When
-        APIDataResponse<String> response = APIDataResponse.empty();
+        ApiDataResponse<String> response = ApiDataResponse.empty();
 
         // Then
         assertThat(response)

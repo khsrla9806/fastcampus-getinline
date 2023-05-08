@@ -1,8 +1,7 @@
 package com.fastcampus.getinline.controller.api;
 
 import com.fastcampus.getinline.constant.EventStatus;
-import com.fastcampus.getinline.dto.APIDataResponse;
-import com.fastcampus.getinline.dto.EventDto;
+import com.fastcampus.getinline.dto.ApiDataResponse;
 import com.fastcampus.getinline.dto.EventRequest;
 import com.fastcampus.getinline.dto.EventResponse;
 import com.fastcampus.getinline.service.EventService;
@@ -25,12 +24,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @RestController
-public class APIEventController {
+public class ApiEventController {
 
     private final EventService eventService;
 
     @GetMapping("/events")
-    public APIDataResponse<List<EventResponse>> getEvents(
+    public ApiDataResponse<List<EventResponse>> getEvents(
             @Positive @RequestParam(required = false) Long placeId, // 해당 애노테이션의 옵션을 주면 넣어주지 않아도 문제가 없다.
             @Size(min = 2) @RequestParam(required = false) String eventName,
             @RequestParam(required = false) EventStatus eventStatus,
@@ -42,23 +41,23 @@ public class APIEventController {
         List<EventResponse> responses = eventService
                 .getEvents(placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime)
                 .stream().map(EventResponse::from).collect(Collectors.toList());
-        return APIDataResponse.of(responses);
+        return ApiDataResponse.of(responses);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
-    public APIDataResponse<EventResponse> createEvent(@Valid @RequestBody EventRequest eventRequest) {
+    public ApiDataResponse<EventResponse> createEvent(@Valid @RequestBody EventRequest eventRequest) {
         EventResponse response = eventService.createEvent(EventRequest.toDto(eventRequest));
-        return APIDataResponse.of(response);
+        return ApiDataResponse.of(response);
     }
 
     @GetMapping("/events/{eventId}")
-    public APIDataResponse<EventResponse> getEvent(@PathVariable Long eventId) {
+    public ApiDataResponse<EventResponse> getEvent(@PathVariable Long eventId) {
         if (eventId.equals(2L)) {
-            return APIDataResponse.empty();
+            return ApiDataResponse.empty();
         }
 
-        return APIDataResponse.of(EventResponse.of(
+        return ApiDataResponse.of(EventResponse.of(
                 1L,
                 "오후 운동",
                 EventStatus.OPENED,
@@ -71,16 +70,16 @@ public class APIEventController {
     }
 
     @PutMapping("/events/{eventId}")
-    public APIDataResponse<Void> modifyEvent(
+    public ApiDataResponse<Void> modifyEvent(
             @PathVariable Long eventId,
             @RequestBody EventRequest eventRequest
     ) {
-        return APIDataResponse.empty();
+        return ApiDataResponse.empty();
     }
 
     @DeleteMapping("/events/{eventId}")
-    public APIDataResponse<Void> removeEvent(@PathVariable Long eventId) {
-        return APIDataResponse.empty();
+    public ApiDataResponse<Void> removeEvent(@PathVariable Long eventId) {
+        return ApiDataResponse.empty();
     }
 
 }

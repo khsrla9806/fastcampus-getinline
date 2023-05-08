@@ -1,7 +1,7 @@
 package com.fastcampus.getinline.controller.error;
 
 import com.fastcampus.getinline.constant.ErrorCode;
-import com.fastcampus.getinline.dto.APIErrorResponse;
+import com.fastcampus.getinline.dto.ApiErrorResponse;
 import com.fastcampus.getinline.exception.GeneralException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,8 +13,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
-
-import static com.fastcampus.getinline.constant.ErrorCode.INTERNAL_ERROR;
 
 @RestControllerAdvice(annotations = RestController.class) // RestController를 쓰는 클래스로 범위를 좁힘
 public class APIExceptionHandler extends ResponseEntityExceptionHandler {
@@ -48,7 +46,7 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
                 ErrorCode.SPRING_INTERNAL_ERROR;
         return super.handleExceptionInternal(
                 ex,
-                APIErrorResponse.of(false, errorCode, errorCode.getMessage(ex)),
+                ApiErrorResponse.of(false, errorCode, errorCode.getMessage(ex)),
                 headers,
                 status,
                 request
@@ -63,7 +61,7 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         return super.handleExceptionInternal(
                 exception,
-                APIErrorResponse.of(
+                ApiErrorResponse.of(
                         false,
                         errorCode,
                         errorCode.getMessage(exception)

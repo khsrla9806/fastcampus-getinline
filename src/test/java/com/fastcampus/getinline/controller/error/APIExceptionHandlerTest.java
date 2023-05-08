@@ -1,7 +1,7 @@
 package com.fastcampus.getinline.controller.error;
 
 import com.fastcampus.getinline.constant.ErrorCode;
-import com.fastcampus.getinline.dto.APIErrorResponse;
+import com.fastcampus.getinline.dto.ApiErrorResponse;
 import com.fastcampus.getinline.exception.GeneralException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,6 @@ import javax.validation.ConstraintViolationException;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class APIExceptionHandlerTest {
 
@@ -79,7 +78,7 @@ class APIExceptionHandlerTest {
             HttpStatus status
     ) {
         assertThat(response)
-                .hasFieldOrPropertyWithValue("body", APIErrorResponse.of(
+                .hasFieldOrPropertyWithValue("body", ApiErrorResponse.of(
                         false,
                         errorCode,
                         exception

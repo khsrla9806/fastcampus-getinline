@@ -1,8 +1,7 @@
 package com.fastcampus.getinline.controller.api;
 
 import com.fastcampus.getinline.constant.PlaceType;
-import com.fastcampus.getinline.domain.Place;
-import com.fastcampus.getinline.dto.APIDataResponse;
+import com.fastcampus.getinline.dto.ApiDataResponse;
 import com.fastcampus.getinline.dto.PlaceDto;
 import com.fastcampus.getinline.dto.PlaceRequest;
 import org.springframework.http.HttpStatus;
@@ -13,10 +12,10 @@ import java.util.List;
 
 @RequestMapping("/api")
 @RestController
-public class APIPlaceController {
+public class ApiPlaceController {
     @GetMapping("/places")
-    public APIDataResponse<List<PlaceDto>> getPlaces() {
-        return APIDataResponse.of(List.of(PlaceDto.of(
+    public ApiDataResponse<List<PlaceDto>> getPlaces() {
+        return ApiDataResponse.of(List.of(PlaceDto.of(
                 PlaceType.COMMON,
                 "패스트캠퍼스",
                 "서울시 강남구 강남대로 1234",
@@ -30,17 +29,17 @@ public class APIPlaceController {
 
     @ResponseStatus(HttpStatus.CREATED) // 201
     @PostMapping("/places")
-    public APIDataResponse<Void> createPlace(PlaceRequest request) {
-        return APIDataResponse.empty();
+    public ApiDataResponse<Void> createPlace(PlaceRequest request) {
+        return ApiDataResponse.empty();
     }
 
     @GetMapping("/places/{placeId}")
-    public APIDataResponse<PlaceDto> getPlace(@PathVariable Long placeId) {
+    public ApiDataResponse<PlaceDto> getPlace(@PathVariable Long placeId) {
         if (placeId.equals(2L)) {
-            return APIDataResponse.of(null); // 테스트를 위한 임시 코드
+            return ApiDataResponse.of(null); // 테스트를 위한 임시 코드
         }
 
-        return APIDataResponse.of(PlaceDto.of(
+        return ApiDataResponse.of(PlaceDto.of(
                 PlaceType.COMMON,
                 "패스트캠퍼스",
                 "서울시 강남구 강남대로 1234",
@@ -53,12 +52,12 @@ public class APIPlaceController {
     }
 
     @PutMapping("/places/{placeId}")
-    public APIDataResponse<Void> modifyPlace(@PathVariable Long placeId, PlaceRequest request) {
-        return APIDataResponse.empty();
+    public ApiDataResponse<Void> modifyPlace(@PathVariable Long placeId, PlaceRequest request) {
+        return ApiDataResponse.empty();
     }
 
     @DeleteMapping("/places/{placeId}")
-    public APIDataResponse<Void> removePlace(@PathVariable Long placeId) {
-        return APIDataResponse.empty();
+    public ApiDataResponse<Void> removePlace(@PathVariable Long placeId) {
+        return ApiDataResponse.empty();
     }
 }

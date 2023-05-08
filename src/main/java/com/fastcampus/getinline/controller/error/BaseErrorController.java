@@ -1,7 +1,7 @@
 package com.fastcampus.getinline.controller.error;
 
 import com.fastcampus.getinline.constant.ErrorCode;
-import com.fastcampus.getinline.dto.APIErrorResponse;
+import com.fastcampus.getinline.dto.ApiErrorResponse;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,13 +35,13 @@ public class BaseErrorController implements ErrorController {
     }
 
     @RequestMapping("/error")
-    public ResponseEntity<APIErrorResponse> error(HttpServletResponse response) { // Api 요청이 들어왔을 때는 여기로 Exception 처리
+    public ResponseEntity<ApiErrorResponse> error(HttpServletResponse response) { // Api 요청이 들어왔을 때는 여기로 Exception 처리
         HttpStatus status = HttpStatus.valueOf(response.getStatus());
         ErrorCode errorCode = status.is4xxClientError() ? BAD_REQUEST : INTERNAL_ERROR;
 
         return ResponseEntity
                 .status(status)
-                .body(APIErrorResponse.of(
+                .body(ApiErrorResponse.of(
                         false,
                         errorCode
                 ));
