@@ -1,6 +1,7 @@
 package com.fastcampus.getinline.dto;
 
 import com.fastcampus.getinline.constant.EventStatus;
+import com.fastcampus.getinline.domain.Place;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,40 +16,47 @@ public class EventRequest {
     @NotNull @Positive private Long placeId;
     @NotBlank private String eventName;
     @NotNull private EventStatus eventStatus;
-    @NotNull private LocalDateTime eventStartDateTime;
-    @NotNull private LocalDateTime eventEndDateTime;
+    @NotNull private LocalDateTime eventStartDatetime;
+    @NotNull private LocalDateTime eventEndDatetime;
     @NotNull @PositiveOrZero private Integer currentNumberOfPeople;
-    @NotNull @Positive @Min(1) private Integer capacity;
+    @NotNull @Positive private Integer capacity;
     private String memo;
 
     public static EventRequest of(
             Long placeId,
             String eventName,
             EventStatus eventStatus,
-            LocalDateTime eventStartDateTime,
-            LocalDateTime eventEndDateTime,
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime,
             Integer currentNumberOfPeople,
             Integer capacity,
             String memo
     ) {
-        return new EventRequest(placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime, currentNumberOfPeople, capacity, memo);
+        return new EventRequest(
+                placeId,
+                eventName,
+                eventStatus,
+                eventStartDatetime,
+                eventEndDatetime,
+                currentNumberOfPeople,
+                capacity,
+                memo
+        );
     }
 
-    public static EventDto toDto(EventRequest request) {
-        if (request == null) {
-            return null;
-        }
+    public EventDto toDTO() {
         return EventDto.of(
-                request.getPlaceId(),
-                request.getEventName(),
-                request.getEventStatus(),
-                request.getEventStartDateTime(),
-                request.getEventEndDateTime(),
-                request.getCurrentNumberOfPeople(),
-                request.getCapacity(),
-                request.getMemo(),
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                null,
+                null, // TODO: 여기를 반드시 적절히 고쳐야 사용할 수 있음
+                this.getEventName(),
+                this.getEventStatus(),
+                this.getEventStartDatetime(),
+                this.getEventEndDatetime(),
+                this.getCurrentNumberOfPeople(),
+                this.getCapacity(),
+                this.getMemo(),
+                null,
+                null
         );
     }
 }

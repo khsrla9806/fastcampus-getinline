@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventResponse {
-    private Long placeId;
+    private Long id;
+    private PlaceDto place;
     private String eventName;
     private EventStatus eventStatus;
     private LocalDateTime eventStartDatetime;
@@ -21,31 +22,41 @@ public class EventResponse {
     private String memo;
 
     public static EventResponse of(
-            Long placeId,
+            Long id,
+            PlaceDto place,
             String eventName,
             EventStatus eventStatus,
-            LocalDateTime eventStartDateTime,
-            LocalDateTime eventEndDateTime,
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime,
             Integer currentNumberOfPeople,
             Integer capacity,
             String memo
     ) {
-        return new EventResponse(placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime, currentNumberOfPeople, capacity, memo);
+        return new EventResponse(
+                id,
+                place,
+                eventName,
+                eventStatus,
+                eventStartDatetime,
+                eventEndDatetime,
+                currentNumberOfPeople,
+                capacity,
+                memo
+        );
     }
 
-    public static EventResponse from(EventDto eventDto) {
-        if (eventDto == null) {
-            return null;
-        }
+    public static EventResponse from(EventDto eventDTO) {
+        if (eventDTO == null) { return null; }
         return EventResponse.of(
-                eventDto.getPlaceId(),
-                eventDto.getEventName(),
-                eventDto.getEventStatus(),
-                eventDto.getEventStartDateTime(),
-                eventDto.getEventEndDateTime(),
-                eventDto.getCurrentNumberOfPeople(),
-                eventDto.getCapacity(),
-                eventDto.getMemo()
+                eventDTO.getId(),
+                eventDTO.getPlaceDto(),
+                eventDTO.getEventName(),
+                eventDTO.getEventStatus(),
+                eventDTO.getEventStartDatetime(),
+                eventDTO.getEventEndDatetime(),
+                eventDTO.getCurrentNumberOfPeople(),
+                eventDTO.getCapacity(),
+                eventDTO.getMemo()
         );
     }
 }

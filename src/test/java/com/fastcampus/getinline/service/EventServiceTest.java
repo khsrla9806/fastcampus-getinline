@@ -99,8 +99,8 @@ class EventServiceTest {
                             .hasFieldOrPropertyWithValue("eventName", eventName)
                             .hasFieldOrPropertyWithValue("eventStatus", eventStatus);
 
-                    assertThat(event.getEventStartDateTime()).isAfterOrEqualTo(eventStartDatetime); // 내가 검색한 시간의 이후이거나 같다.
-                    assertThat(event.getEventStartDateTime()).isBeforeOrEqualTo(eventEndDatetime); // 내가 검색한 시간의 이전이거나 같다.
+                    assertThat(event.getEventStartDatetime()).isAfterOrEqualTo(eventStartDatetime); // 내가 검색한 시간의 이후이거나 같다.
+                    assertThat(event.getEventStartDatetime()).isBeforeOrEqualTo(eventEndDatetime); // 내가 검색한 시간의 이전이거나 같다.
                 });
 
         verify(eventRepository, times(1)).findEvents(placeId, eventName, eventStatus, eventStartDatetime, eventEndDatetime);

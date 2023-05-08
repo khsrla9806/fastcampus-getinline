@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlaceResponse {
+    private Long id;
     private PlaceType placeType;
     private String placeName;
     private String address;
@@ -17,6 +18,7 @@ public class PlaceResponse {
     private String memo;
 
     public static PlaceResponse of(
+            Long id,
             PlaceType placeType,
             String placeName,
             String address,
@@ -24,6 +26,27 @@ public class PlaceResponse {
             Integer capacity,
             String memo
     ) {
-        return new PlaceResponse(placeType, placeName, address, phoneNumber, capacity, memo);
+        return new PlaceResponse(
+                id,
+                placeType,
+                placeName,
+                address,
+                phoneNumber,
+                capacity,
+                memo
+        );
+    }
+
+    public static PlaceResponse from(PlaceDto placeDto) {
+        if (placeDto == null) { return null; }
+        return PlaceResponse.of(
+                placeDto.getId(),
+                placeDto.getPlaceType(),
+                placeDto.getPlaceName(),
+                placeDto.getAddress(),
+                placeDto.getPhoneNumber(),
+                placeDto.getCapacity(),
+                placeDto.getMemo()
+        );
     }
 }

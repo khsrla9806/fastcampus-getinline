@@ -10,7 +10,6 @@ import com.fastcampus.getinline.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.events.EventTarget;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,8 +47,8 @@ public class EventService {
                 eventDto.getPlaceId(),
                 eventDto.getEventName(),
                 eventDto.getEventStatus(),
-                eventDto.getEventStartDateTime(),
-                eventDto.getEventEndDateTime(),
+                eventDto.getEventStartDatetime(),
+                eventDto.getEventEndDatetime(),
                 eventDto.getCurrentNumberOfPeople(),
                 eventDto.getCapacity(),
                 eventDto.getMemo()
