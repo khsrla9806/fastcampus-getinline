@@ -1,4 +1,4 @@
-insert into event (place_id, event_name, event_status, event_start_date_time, event_end_date_time, current_number_of_people, capacity, memo)
+insert into event (place_id, event_name, event_status, event_start_datetime, event_end_datetime, current_number_of_people, capacity, memo)
 values
     (1, '운동1', 'OPENED', '2021-01-01 09:00:00', '2021-01-01 12:00:00', 0, 20, 'test memo1'),
     (1, '운동2', 'OPENED', '2021-01-01 13:00:00', '2021-01-01 12:00:00', 0, 20, 'test memo2'),

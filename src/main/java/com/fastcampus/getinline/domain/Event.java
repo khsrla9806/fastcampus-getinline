@@ -44,12 +44,12 @@ public class Event {
     @Setter
     @Column(nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime eventStartDateTime;
+    private LocalDateTime eventStartDatetime;
 
     @Setter
     @Column(nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime eventEndDateTime;
+    private LocalDateTime eventEndDatetime;
 
     @Setter
     @Column(nullable = false)
@@ -82,8 +82,8 @@ public class Event {
             Long placeId,
             String eventName,
             EventStatus eventStatus,
-            LocalDateTime eventStartDateTime,
-            LocalDateTime eventEndDateTime,
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime,
             Integer currentNumberOfPeople,
             Integer capacity,
             String memo
@@ -91,8 +91,8 @@ public class Event {
         this.placeId = placeId;
         this.eventName = eventName;
         this.eventStatus = eventStatus;
-        this.eventStartDateTime = eventStartDateTime;
-        this.eventEndDateTime = eventEndDateTime;
+        this.eventStartDatetime = eventStartDatetime;
+        this.eventEndDatetime = eventEndDatetime;
         this.currentNumberOfPeople = currentNumberOfPeople;
         this.capacity = capacity;
         this.memo = memo;
@@ -129,6 +129,6 @@ public class Event {
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventName, eventStartDateTime, eventEndDateTime, createdAt, modifiedAt);
+        return Objects.hash(eventName, eventStartDatetime, eventEndDatetime, createdAt, modifiedAt);
     }
 }
