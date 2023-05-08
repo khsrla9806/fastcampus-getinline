@@ -29,8 +29,8 @@ public class Event {
     private Long id;
 
     @Setter // Setter를 부분적으로 선택해서 지정하기 위해서 필드에 직접 설정
-    @Column(nullable = false)
-    private Long placeId;
+    @ManyToOne(optional = false) // nullable = false
+    private Place place;
 
     @Setter
     @Column(nullable = false)
@@ -79,7 +79,7 @@ public class Event {
 
     // JPA에서 자동으로 입력해주는 값들은 빼고 생성자를 작성
     protected Event(
-            Long placeId,
+            Place place,
             String eventName,
             EventStatus eventStatus,
             LocalDateTime eventStartDatetime,
@@ -88,7 +88,7 @@ public class Event {
             Integer capacity,
             String memo
     ) {
-        this.placeId = placeId;
+        this.place = place;
         this.eventName = eventName;
         this.eventStatus = eventStatus;
         this.eventStartDatetime = eventStartDatetime;
@@ -99,7 +99,7 @@ public class Event {
     }
 
     public static Event of(
-            Long placeId,
+            Place place,
             String eventName,
             EventStatus eventStatus,
             LocalDateTime eventStartDateTime,
@@ -109,7 +109,7 @@ public class Event {
             String memo
     ) {
         return new Event(
-                placeId,
+                place,
                 eventName,
                 eventStatus,
                 eventStartDateTime,
