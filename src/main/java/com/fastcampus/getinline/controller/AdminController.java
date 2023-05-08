@@ -1,7 +1,10 @@
 package com.fastcampus.getinline.controller;
 
+import com.fastcampus.getinline.constant.EventStatus;
 import com.fastcampus.getinline.constant.PlaceType;
+import com.fastcampus.getinline.dto.EventDto;
 import com.fastcampus.getinline.dto.PlaceDto;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +22,7 @@ public class AdminController {
 
     @GetMapping("/places")
     public ModelAndView adminPlaces(
-            PlaceType placeType, // 검색어를 추가
+            PlaceType placeType,
             String placeName,
             String address
     ) {
@@ -32,9 +35,10 @@ public class AdminController {
     }
 
     @GetMapping("/places/{placeId}")
-    public String adminPlaceDetail(@PathVariable Long placeId) {
+    public ModelAndView adminPlaceDetail(@PathVariable Long placeId) {
         Map<String, Object> map = new HashMap<>();
         map.put("place", PlaceDto.of(
+                placeId,
                 PlaceType.COMMON,
                 "랄라배드민턴장",
                 "서울시 강남구 강남대로 1234",
@@ -44,16 +48,56 @@ public class AdminController {
                 LocalDateTime.now(),
                 LocalDateTime.now()
         ));
-        return "admin/place-detail";
+
+        return new ModelAndView("admin/place-detail", map);
     }
 
     @GetMapping("/events")
-    public String adminEvents() {
-        return "admin/events";
+    public ModelAndView adminEvents(
+            Long placeId,
+            String eventName,
+            EventStatus eventStatus,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDatetime,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventEndDatetime
+    ) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("placeName", "place-" + placeId);
+        map.put("eventName", eventName);
+        map.put("eventStatus", eventStatus);
+        map.put("eventStartDatetime", eventStartDatetime);
+        map.put("eventEndDatetime", eventEndDatetime);
+
+        return new ModelAndView("admin/events", map);
     }
 
     @GetMapping("/events/{eventId}")
-    public String adminEventDetail(@PathVariable Long eventId) {
-        return "admin/event-detail";
+    public ModelAndView adminEventDetail(@PathVariable Long eventId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("event", EventDto.of(
+                eventId,
+                PlaceDto.of(
+                        1L,
+                        PlaceType.SPORTS,
+                        "배드민턴장",
+                        "서울시 그리구 그래동",
+                        "010-2222-3333",
+                        33,
+                        null,
+                        LocalDateTime.now(),
+                        LocalDateTime.now()
+                ),
+                "오후 운동",
+                EventStatus.OPENED,
+                LocalDateTime.of(2021, 1, 1, 13, 0, 0),
+                LocalDateTime.of(2021, 1, 1, 16, 0, 0),
+                0,
+                24,
+                "마스크 꼭 착용하세요",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        ));
+
+        return new ModelAndView("admin/event-detail", map);
     }
+
 }

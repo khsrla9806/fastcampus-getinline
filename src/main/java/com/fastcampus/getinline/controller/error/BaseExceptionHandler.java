@@ -15,36 +15,33 @@ import static com.fastcampus.getinline.constant.ErrorCode.INTERNAL_ERROR;
 public class BaseExceptionHandler {
 
     @ExceptionHandler
-    public ModelAndView general(GeneralException exception) {
-        ErrorCode errorCode = exception.getErrorCode();
-        HttpStatus status = errorCode.isClientSideError() ?
-                HttpStatus.BAD_REQUEST :
-                HttpStatus.INTERNAL_SERVER_ERROR;
+    public ModelAndView general(GeneralException e) {
+        ErrorCode errorCode = e.getErrorCode();
 
         return new ModelAndView(
                 "error",
                 Map.of(
-                        "statusCode", status.value(),
+                        "statusCode", errorCode.getHttpStatus().value(),
                         "errorCode", errorCode,
-                        "message", errorCode.getMessage(exception)
+                        "message", errorCode.getMessage()
                 ),
-                status
+                errorCode.getHttpStatus()
         );
     }
 
     @ExceptionHandler
-    public ModelAndView general(Exception exception) {
-        ErrorCode errorCode = INTERNAL_ERROR;
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+    public ModelAndView exception(Exception e) {
+        ErrorCode errorCode = ErrorCode.INTERNAL_ERROR;
 
         return new ModelAndView(
                 "error",
                 Map.of(
-                        "statusCode", status.value(),
+                        "statusCode", errorCode.getHttpStatus().value(),
                         "errorCode", errorCode,
-                        "message", errorCode.getMessage(exception)
+                        "message", errorCode.getMessage(e)
                 ),
-                status
+                errorCode.getHttpStatus()
         );
     }
+
 }

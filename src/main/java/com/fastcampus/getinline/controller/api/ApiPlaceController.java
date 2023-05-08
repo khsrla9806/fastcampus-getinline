@@ -4,6 +4,7 @@ import com.fastcampus.getinline.constant.PlaceType;
 import com.fastcampus.getinline.dto.ApiDataResponse;
 import com.fastcampus.getinline.dto.PlaceDto;
 import com.fastcampus.getinline.dto.PlaceRequest;
+import com.fastcampus.getinline.dto.PlaceResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,45 +15,46 @@ import java.util.List;
 @RestController
 public class ApiPlaceController {
     @GetMapping("/places")
-    public ApiDataResponse<List<PlaceDto>> getPlaces() {
-        return ApiDataResponse.of(List.of(PlaceDto.of(
+    public ApiDataResponse<List<PlaceResponse>> getPlaces() {
+        return ApiDataResponse.of(List.of(PlaceResponse.of(
+                1L,
                 PlaceType.COMMON,
-                "패스트캠퍼스",
+                "랄라배드민턴장",
                 "서울시 강남구 강남대로 1234",
-                "010-1234-1234",
+                "010-1234-5678",
                 30,
-                "신장개업",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                "신장개업"
         )));
     }
 
-    @ResponseStatus(HttpStatus.CREATED) // 201
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/places")
-    public ApiDataResponse<Void> createPlace(PlaceRequest request) {
+    public ApiDataResponse<Void> createPlace(@RequestBody PlaceRequest placeRequest) {
         return ApiDataResponse.empty();
     }
 
     @GetMapping("/places/{placeId}")
-    public ApiDataResponse<PlaceDto> getPlace(@PathVariable Long placeId) {
+    public ApiDataResponse<PlaceResponse> getPlace(@PathVariable Long placeId) {
         if (placeId.equals(2L)) {
-            return ApiDataResponse.of(null); // 테스트를 위한 임시 코드
+            return ApiDataResponse.empty();
         }
 
-        return ApiDataResponse.of(PlaceDto.of(
+        return ApiDataResponse.of(PlaceResponse.of(
+                placeId,
                 PlaceType.COMMON,
-                "패스트캠퍼스",
+                "랄라배드민턴장",
                 "서울시 강남구 강남대로 1234",
-                "010-1234-1234",
+                "010-1234-5678",
                 30,
-                "신장개업",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                "신장개업"
         ));
     }
 
     @PutMapping("/places/{placeId}")
-    public ApiDataResponse<Void> modifyPlace(@PathVariable Long placeId, PlaceRequest request) {
+    public ApiDataResponse<Void> modifyPlace(
+            @PathVariable Long placeId,
+            @RequestBody PlaceRequest placeRequest
+    ) {
         return ApiDataResponse.empty();
     }
 

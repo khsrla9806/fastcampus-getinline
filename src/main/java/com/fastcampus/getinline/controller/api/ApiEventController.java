@@ -30,56 +30,52 @@ public class ApiEventController {
 
     @GetMapping("/events")
     public ApiDataResponse<List<EventResponse>> getEvents(
-            @Positive @RequestParam(required = false) Long placeId, // 해당 애노테이션의 옵션을 주면 넣어주지 않아도 문제가 없다.
-            @Size(min = 2) @RequestParam(required = false) String eventName,
-            @RequestParam(required = false) EventStatus eventStatus,
-            // String으로 들어온 날짜 포멧을 LocalDateTime으로 잘 바꿔준다.
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDateTime,
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventEndDateTime
+            @Positive Long placeId,
+            @Size(min = 2) String eventName,
+            EventStatus eventStatus,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDatetime,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventEndDatetime
     ) {
-        log.debug("이벤트 컨트롤러 관찰 = {}", placeId);
-        List<EventResponse> responses = eventService
-                .getEvents(placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime)
-                .stream().map(EventResponse::from).collect(Collectors.toList());
-        return ApiDataResponse.of(responses);
+        List<EventResponse> eventResponses = eventService.getEvents(
+                placeId,
+                eventName,
+                eventStatus,
+                eventStartDatetime,
+                eventEndDatetime
+        ).stream().map(EventResponse::from).collect(Collectors.toList());
+
+        return ApiDataResponse.of(eventResponses);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
-    public ApiDataResponse<EventResponse> createEvent(@Valid @RequestBody EventRequest eventRequest) {
-        EventResponse response = eventService.createEvent(EventRequest.toDto(eventRequest));
-        return ApiDataResponse.of(response);
+    public ApiDataResponse<String> createEvent(@Valid @RequestBody EventRequest eventRequest) {
+        boolean result = eventService.createEvent(eventRequest.toDTO());
+
+        return ApiDataResponse.of(Boolean.toString(result));
     }
 
     @GetMapping("/events/{eventId}")
-    public ApiDataResponse<EventResponse> getEvent(@PathVariable Long eventId) {
-        if (eventId.equals(2L)) {
-            return ApiDataResponse.empty();
-        }
+    public ApiDataResponse<EventResponse> getEvent(@Positive @PathVariable Long eventId) {
+        EventResponse eventResponse = EventResponse.from(eventService.getEvent(eventId).orElse(null));
 
-        return ApiDataResponse.of(EventResponse.of(
-                1L,
-                "오후 운동",
-                EventStatus.OPENED,
-                LocalDateTime.of(2021, 1, 1, 13, 0, 0),
-                LocalDateTime.of(2021, 1, 1, 16, 0, 0),
-                0,
-                24,
-                "마스크 꼭 착용하세요"
-        ));
+        return ApiDataResponse.of(eventResponse);
     }
 
     @PutMapping("/events/{eventId}")
-    public ApiDataResponse<Void> modifyEvent(
-            @PathVariable Long eventId,
-            @RequestBody EventRequest eventRequest
+    public ApiDataResponse<String> modifyEvent(
+            @Positive @PathVariable Long eventId,
+            @Valid @RequestBody EventRequest eventRequest
     ) {
-        return ApiDataResponse.empty();
+        boolean result = eventService.modifyEvent(eventId, eventRequest.toDTO());
+        return ApiDataResponse.of(Boolean.toString(result));
     }
 
     @DeleteMapping("/events/{eventId}")
-    public ApiDataResponse<Void> removeEvent(@PathVariable Long eventId) {
-        return ApiDataResponse.empty();
+    public ApiDataResponse<String> removeEvent(@Positive @PathVariable Long eventId) {
+        boolean result = eventService.removeEvent(eventId);
+
+        return ApiDataResponse.of(Boolean.toString(result));
     }
 
 }
