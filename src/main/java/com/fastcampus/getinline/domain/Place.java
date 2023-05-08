@@ -55,9 +55,6 @@ public class Place {
     @Setter
     private String memo;
 
-    @OrderBy("id")
-    @OneToMany(mappedBy = "place")
-    private final Set<Event> events = new LinkedHashSet<>(); // 순서보장
 
     @Column(nullable = false, insertable = false, updatable = false)
     @CreatedDate
@@ -66,6 +63,14 @@ public class Place {
     @Column(nullable = false, insertable = false, updatable = false)
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "place")
+    private final Set<Event> events = new LinkedHashSet<>(); // 순서보장
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "place")
+    private final Set<AdminPlaceMap> adminPlaceMaps = new LinkedHashSet<>();
 
     protected Place() {}
 

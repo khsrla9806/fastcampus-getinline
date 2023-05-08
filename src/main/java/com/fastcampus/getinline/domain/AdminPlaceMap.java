@@ -26,11 +26,11 @@ public class AdminPlaceMap {
 
 
     @Setter
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false) // nullable = false
     private Admin admin;
 
     @Setter
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false) // nullable = false
     private Place place;
 
 
