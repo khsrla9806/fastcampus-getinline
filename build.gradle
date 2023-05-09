@@ -37,8 +37,10 @@ dependencies {
 
     // queryDSL 설정
     implementation "com.querydsl:querydsl-jpa"
-    implementation "com.querydsl:querydsl-core"
+    implementation "com.querydsl:querydsl-core" // querydsl-jpa에 core는 포함되어 있어서 굳이 포함해주지 않아도 된다.
     implementation "com.querydsl:querydsl-collections"
+    // Gradle 문법인 xxx:xxx:version과는 조금 다른 형식을 가지고 있어서 직접 dependencyManagement로 버전을 넣어줍니다.
+    // Groove 문법 중 하나인 "${}"을 사용하면 변수를 넣을 수 있다. '${}'을 사용하면 문자열로 처리되기 때문에 주의
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
     annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 발생 대응
 }
