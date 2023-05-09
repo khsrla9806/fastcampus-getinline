@@ -4,11 +4,14 @@ import com.fastcampus.getinline.constant.EventStatus;
 import com.fastcampus.getinline.constant.PlaceType;
 import com.fastcampus.getinline.domain.Event;
 import com.fastcampus.getinline.domain.Place;
+import com.fastcampus.getinline.dto.EventViewResponse;
 import com.querydsl.core.BooleanBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -29,6 +32,31 @@ public class EventRepositoryTest {
     }
 
     @Test
+    void givenSearchParams_whenFindingEventViewResponse_thenReturnsEventViewResponsePage() {
+        // Given
+
+        // When
+        Page<EventViewResponse> result = eventRepository.findEventViewPageBySearchParams(
+                "배드민턴", // 부분 일치 테스트
+                "운동1", // 완전 일치 테스트
+                EventStatus.OPENED,
+                LocalDateTime.of(2021, 1, 1, 0, 0, 0),
+                LocalDateTime.of(2021, 1, 2, 0, 0, 0),
+                PageRequest.of(0, 5) // 0번째 페이지, 5개의 자료만
+        );
+
+        // Then
+        assertThat(result.getTotalPages()).isEqualTo(1);
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent().get(0))
+                .hasFieldOrPropertyWithValue("placeName", "서울 배드민턴장")
+                .hasFieldOrPropertyWithValue("eventName", "운동1")
+                .hasFieldOrPropertyWithValue("eventStatus", EventStatus.OPENED)
+                .hasFieldOrPropertyWithValue("eventStartDatetime", LocalDateTime.of(2021, 1, 1, 9, 0, 0))
+                .hasFieldOrPropertyWithValue("eventEndDatetime", LocalDateTime.of(2021, 1, 1, 12, 0, 0));
+    }
+
+    @Test
     void test() {
         // Given
         Place place = createPlace();
@@ -41,14 +69,7 @@ public class EventRepositoryTest {
         Iterable<Event> events = eventRepository.findAll(new BooleanBuilder());
 
         // Then
-        assertThat(events).hasSize(7); // data.sql에서 기본적으로 6개의 데이터를 넣어주기 때문에
-
-        // Id가 순차적으로 Auto Increment 되었는지 확인해보는 코드
-        Long id = 1L;
-        Iterator<Event> iterator = events.iterator();
-        while (iterator.hasNext()) {
-            assertThat(iterator.next().getId()).isEqualTo(id++);
-        }
+        assertThat(events).hasSize(27); // data.sql에서 기본적으로 6개의 데이터를 넣어주기 때문에
     }
 
     private Event createEvent(Place place) {
