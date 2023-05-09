@@ -2,6 +2,7 @@ package com.fastcampus.getinline.repository;
 
 import com.fastcampus.getinline.domain.Event;
 import com.fastcampus.getinline.domain.QEvent;
+import com.fastcampus.getinline.repository.querydsl.EventRepositoryCustom;
 import com.querydsl.core.types.dsl.ComparableExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 
 public interface EventRepository extends
         JpaRepository<Event, Long>,
+        EventRepositoryCustom,
         QuerydslPredicateExecutor<Event>,
         QuerydslBinderCustomizer<QEvent> {
 
